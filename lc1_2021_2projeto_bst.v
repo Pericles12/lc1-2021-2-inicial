@@ -222,15 +222,30 @@ Lemma ForallT_insert : forall (V : Type) (P : key -> V -> Prop) (t : tree V),
     ForallT P t -> forall (k : key) (v : V),
       P k v -> ForallT P (insert k v t).
 Proof.
-  induction t.
-  - intros H k v H'.
-    admit.
-  - intros H k0 v0 H'.
+    induction t.
+    - intros H1 k v H2. simpl.  auto.
+    - intros H1 k' v' H2.
+    simpl in H1.
+    destruct H1  as [H1 [Ht1 Ht2]].
     simpl.
-    bdall.
-    + admit.
-    + admit.
-    + 
+    bdestruct (k >? k').
+    + simpl.
+      split.
+      * assumption.
+      * split.
+        ** apply IHt1; assumption.
+        ** assumption.
+    + bdestruct (k' >? k).
+      * simpl.
+        split.
+        ** assumption.
+        ** split.
+          *** assumption.
+          *** apply IHt2. assumption. assumption.
+      * simpl. auto.
+  Qed.
+
+
      
 (** Substitua esta linha pela sua prova. *)Admitted.
 
