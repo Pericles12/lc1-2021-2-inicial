@@ -222,15 +222,29 @@ Lemma ForallT_insert : forall (V : Type) (P : key -> V -> Prop) (t : tree V),
     ForallT P t -> forall (k : key) (v : V),
       P k v -> ForallT P (insert k v t).
 Proof.
-  induction t.
-  - intros H k v H'.
-    admit.
-  - intros H k0 v0 H'.
+    induction t.
+    - intros H1 k v H2. simpl.  auto.
+    - intros H1 k' v' H2.
+    simpl in H1.
+    destruct H1  as [H1 [Ht1 Ht2]].
     simpl.
-    bdall.
-    + admit.
-    + admit.
-    + 
+    bdestruct (k >? k').
+    + simpl.
+      split.
+      * assumption.
+      * split.
+        ** apply IHt1; assumption.
+        ** assumption.
+    + bdestruct (k' >? k).
+      * simpl.
+        split.
+        ** assumption.
+        ** split.
+          *** assumption.
+          *** apply IHt2. assumption. assumption.
+      * simpl. auto.
+  Qed.
+
      
 (** Substitua esta linha pela sua prova. *)Admitted.
 
@@ -239,22 +253,43 @@ Proof.
 Theorem insert_BST : forall (V : Type) (k : key) (v : V) (t : tree V),
     BST t -> BST (insert k v t).
 Proof.
-  induction t.
-  - admit.
-  - intro H.
-    simpl.
-    bdall.
-    + admit.
-    + admit.
-    + Search le.
-      Search "_ <= _".
-      assert (H2: k = k0).
-      {
-        apply Nat.le_antisymm; assumption.
-      }
-      subst.
+    induction t.
+    - intro H.
+      simpl.
+      apply BST_T.
+      + simpl; auto.
+      + simpl; auto.
+      + apply BST_E.
+      + apply BST_E.
+    - intro H.
       inv H.
-      admit.
+      simpl.
+      bdall.
+      -- apply BST_T.
+      --- apply ForallT_insert; assumption.
+      --- assumption.
+      --- apply IHt1. assumption.
+      --- assumption.
+      --   apply BST_T.
+      --- assumption.
+      --- apply ForallT_insert; assumption.
+      --- assumption.
+      --- apply IHt2; assumption.
+      -- apply BST_T. 
+      unfold ge in H. assert (Heq: k0 = k).
+      --- {
+            apply Nat.le_antisymm; assumption.
+          }
+       ---  rewrite Heq in H4. subst. assumption.
+       ---  unfold ge in H. assert (Heq: k0 = k).
+       ---- apply Nat.le_antisymm. assumption. assumption.
+       ---- rewrite Heq in H5.  subst. assumption.
+       --- assumption.
+       --- assumption.
+Qed.
+  
+      
+      
 (** Substitua esta linha pela sua prova. *)Admitted.
 
 (** * A correção das funções de busca [lookup] e [bound] *)
