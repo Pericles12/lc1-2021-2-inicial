@@ -327,10 +327,49 @@ Qed.
 Theorem lookup_insert_neq :
   forall (V : Type) (t : tree V) (d : V) (k k' : key) (v : V),
    k <> k' -> lookup d k' (insert k v t) = lookup d k' t.
-Proof.
+   Proof.
+    induction t.
+    intros.
+    repeat (simpl; bdestruct_guard; try lia; auto).
+    intros.
+    repeat (simpl; bdestruct_guard; try lia; auto).
+Qed.
+   
 (** Substitua esta linha pela sua prova. *)Admitted.
 
 (** Enuncie e prove os três teoremas análogos para a função [bound]. *)
+
+Theorem bound_empty : forall (V : Type) (k : key),
+  bound k (@empty_tree V) = false.
+Proof.
+   auto.
+Qed.
+
+Theorem bound_insert_eq : forall (V : Type) (t : tree V) (k : key) (v : V), bound k (insert k v t) = true.
+Proof.
+induction t.
+  -intros k v.
+  simpl insert.
+  simpl bound.
+  bdall.
+  -intros k' v'.
+  simpl.
+  bdall.
+Qed.
+
+Theorem bound_insert_neq :
+  forall (V : Type) (t : tree V) (k k' : key) (v : V),
+   k <> k' -> bound k' (insert k v t) = bound k' t.
+Proof.
+induction t.
+intros k k' v H.
+simpl.
+bdall.
+intros k' k'' v' H.
+simpl.
+bdall.
+Qed.
+
     
 (** A relação esperada entre as funções [bound] e [lookup] é que, se [bound k t] retorna [false] então [lookup d k t] retorna o valor default [d]. Prove este fato dado pelo seguinte teorema: *)
 
@@ -339,7 +378,17 @@ Theorem bound_default :
     bound k t = false ->
     lookup d k t = d.
 Proof.
-(** Substitua esta linha pela sua prova. *)Admitted.
+induction t. intros; simpl.
+- reflexivity.
+- intros. simpl.  bdestruct (k0 >? k); try lia; auto.
+-- simpl in H. bdestruct (k0 >? k) ; auto; try lia.
+--  bdestruct (k >? k0); try lia; auto .
+--- apply IHt2. simpl in H. bdestruct (k0 >? k).
+---- destruct H. try lia.
+---- bdestruct (k >? k0); try lia ; auto.
+--- inversion H.  bdestruct (k0 >? k); auto; try lia.  
+bdestruct (k >? k0); auto; try lia.
+Qed.
     
 (** * Convertendo árvores binárias de busca em listas *)
 
