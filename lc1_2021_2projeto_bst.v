@@ -1,5 +1,5 @@
 (** * Formalização da estrutura de árvores binárias de busca%\footnote{Este documento foi adaptado de \url{https://softwarefoundations.cis.upenn.edu/}}% *)
-
+(** atualização *)
 From Coq Require Import String.
 From Coq Require Export Arith.
 From Coq Require Export Lia.
